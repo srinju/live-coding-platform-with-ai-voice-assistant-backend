@@ -170,7 +170,8 @@ class CodeExecutionWorker {
                 result : resultStatus,
                 output : resultOutput,
                 time : resultTime,
-                memory : resultMemory
+                memory : resultMemory,
+                status : "checked"
             })
             .eq('id' , submission.interviewId);
 
@@ -182,12 +183,7 @@ class CodeExecutionWorker {
         console.log("the result of the code execution is saved to the supabase db " , data);
             
         //publish to the redis pub sub channel.
-        await this.publishResult(submission.questionId, {
-            status : resultStatus,
-            output : resultOutput,
-            time : resultTime,
-            memory : resultMemory
-        });
+        await this.publishResult(submission.questionId, data);
 
         console.log("the result of the code execution is published to the redis pub sub channel successfully!!");
 

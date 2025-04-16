@@ -49,18 +49,28 @@ app.post("/save-code" , async (req,res) => {
    const supabase = getSupabaseClient(); //create the supabase client 
     try {
         const body = req.body ; 
-        const { questionId , question ,  interviewId ,  code , language } = body;
+        const { questionId , question ,  interviewId ,  code , language , status} = body;
 
         console.log("the data receiveed from the ws server is : " , body);
 
-        //save the payload to our supabase db>
+        if(!questionId || !interviewId) {
+            console.error("questionId or interviewId is missing in the request body");
+            res.status(400).json({
+                success : false,
+                message : "questionId or interviewId is missing in the request body"
+            });
+            return;
+        }
+
+        //save the payload to our supabase db in the interview table> (CONFIRMed FROM VIJAY)
         const {data , error} = await supabase
-            .from('interview')
+            .from('interview') //sep table
             .update({
                 questionId : questionId,
                 question : question,
                 code : code,
-                language : language
+                language : language,
+                status : status
             })
             .eq('id' , interviewId);
 
@@ -98,20 +108,22 @@ app.post("/save-code" , async (req,res) => {
 //we push the payload to the redis queue and the worker picks it up and calls judge0 for the checking 
 
 app.post('/run-code' , async (req ,res) => {
-    //get the instance of the single ton redis client
+    //instance of the single ton redis client
     const supabase = getSupabaseClient();
     try{
-        //get the body
+        // body
         const body = req.body;
-        const {questionId , interviewId , code , language} = body;
+        const {questionId , question , interviewId , code , language , status} = body;
 
         //first push the code to the db before pushing it to the worker for excecution
         const {data , error} = await supabase
             .from('interview')
             .update({
                 questionId : questionId,
+                question : question,
                 code : code,
-                language : language
+                language : language,
+                status : status
             })
             .eq('id' , interviewId);
 
@@ -130,10 +142,11 @@ app.post('/run-code' , async (req ,res) => {
         //now push the payload to the redis queue
         const payload = {
             quetionId : questionId,
+            question : question,
             interviewId : interviewId,
             code : code,
             language : language,
-            status : "unchecked"
+            status : status
         };
 
         //push the payload to a redis queue>

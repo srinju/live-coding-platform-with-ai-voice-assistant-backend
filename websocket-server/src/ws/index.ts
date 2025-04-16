@@ -17,6 +17,7 @@ interface requestBodType {
     interviewId : string;
     code : string;
     language : string;
+    status : string;
 };
 
 const PRIMARY_BACKEND_URL = "http://localhost:3001";
@@ -36,7 +37,9 @@ const redisClient = createClient();
             console.log("the message from the pub sub channel is : " , JSON.parse(message));
 
             const parsedMessage = JSON.parse(message);
-            const { resultStatus , resultOutput , resultTime , resultMemory} = parsedMessage;
+
+            /*
+            const {  resultStatus , resultOutput , resultTime , resultMemory} = parsedMessage;
 
             const dataToSendPayload = {
                 resultStatus ,
@@ -44,12 +47,20 @@ const redisClient = createClient();
                 resultTime ,
                 resultMemory
             }
+            */
+
+            const {questionId , question , result , output , time , memory} = parsedMessage;
 
             //send the result to the frontend via the ws connection.
             wss.clients.forEach(client => {
                 if(client.readyState === WebSocket.OPEN) {
                     client.send(JSON.stringify({
-                        dataToSendPayload
+                        questionId ,
+                        question ,
+                        result ,
+                        output ,
+                        time ,
+                        memory
                     }))
                 } else {
                     console.log("no active web socket connection found  , the clienis not ready to receive the result!!");
@@ -60,7 +71,7 @@ const redisClient = createClient();
     } catch(err) {
         console.error("an error occured while subscribing to the redis pub sub channel or sending request back to the frontend via the ws connection : " , err);
     }
-    
+
 })();
 
 wss.on('connection' , async function connection(socket) {
@@ -79,16 +90,22 @@ wss.on('connection' , async function connection(socket) {
         */
        console.log("the data received from the frontend is  : " , data.toString());
        try {
-
+            //take room name maybe for rpc call to the voice agent 
             const {questionId , question , interviewId ,  code , language} = JSON.parse(data.toString());
             //ask vijay whether we need to create a room for each user or we just handle things from the db
             //hit out backend route to save the code in the db>
+            if(!questionId || !interviewId) {
+                console.error("questionId or interviewId is missing in the request body");
+                return;
+            }
+
             const requestBody : requestBodType = {
                 questionId : questionId ,
                 question : question,
                 interviewId : interviewId,
                 code : code,
-                language : language
+                language : language,
+                status : "unchecked"
             }
 
             const response = await fetch(`${PRIMARY_BACKEND_URL}/save-code` , {
