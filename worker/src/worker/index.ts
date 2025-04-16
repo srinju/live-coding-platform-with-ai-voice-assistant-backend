@@ -240,6 +240,7 @@ async function main() {
   try {
     await worker.connect();
     await worker.start();
+    console.log("the worker is started successfully!!");
   } catch (error) {
     console.error('Worker failed:', error);
     process.exit(1);
