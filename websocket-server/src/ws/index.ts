@@ -15,6 +15,8 @@ const wss = new WebSocketServer({
     server : httpServer
 });
 
+const submissionsClient = new Map();
+
 interface requestBodType {
     questionId : string;
     question : string;
@@ -55,21 +57,21 @@ const redisClient = createClient();
 
             const {questionId , question , result , output , time , memory} = parsedMessage;
 
-            //send the result to the frontend via the ws connection.
-            wss.clients.forEach(client => {
-                if(client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        questionId ,
-                        question ,
-                        result ,
-                        output ,
-                        time ,
-                        memory
-                    }))
-                } else {
-                    console.log("no active web socket connection found  , the clienis not ready to receive the result!!");
-                }
-            })
+            //get the ws client from the submissionsClient map
+            const wsClient = submissionsClient.get(questionId);
+
+            if(wsClient && wsClient.readyState === WebSocket.OPEN) {
+                wsClient.send(JSON.stringify({
+                    questionId,
+                    question,
+                    result,
+                    output,
+                    time,
+                    memory
+                }))
+            } else {
+                console.log("no active web socket connection found  , the clienis not ready to receive the result!!");
+            }
         });
         console.log("subscribed to the redis pub sub channel execution-results successfully!!");
     } catch(err) {
@@ -101,6 +103,10 @@ wss.on('connection' , async function connection(socket) {
             if(!questionId || !interviewId) {
                 console.error("questionId or interviewId is missing in the request body");
                 return;
+            }
+
+            if(questionId) {
+                submissionsClient.set(questionId , socket);
             }
 
             const requestBody : requestBodType = {
