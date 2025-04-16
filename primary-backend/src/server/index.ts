@@ -64,15 +64,15 @@ app.post("/save-code" , async (req,res) => {
 
         //save the payload to our supabase db in the interview table> (CONFIRMed FROM VIJAY)
         const {data , error} = await supabase
-            .from('interview') //sep table
+            .from('live_coding_questions') //sep table
             .update({
-                questionId : questionId,
+                question_id : questionId,
                 question : question,
                 code : code,
                 language : language,
                 status : status
             })
-            .eq('id' , interviewId);
+            .eq('interview_id' , interviewId);
 
         if(error) {
             console.error("error updating interview table with the payload from the ws server " , error.message);
