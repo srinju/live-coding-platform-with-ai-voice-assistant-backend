@@ -4,13 +4,15 @@
 
 //web socker server takes the code persistently from the frotnend and hits our route to save the code in the db
 //so the voice agent can fetch the code from the db and the see what the user has written so far.
-
 import express from "express";
 import cors from "cors";
 import { createClient } from "@supabase/supabase-js";
 import { createClient as cl } from "redis";
-
+import * as dotenv from "dotenv";
+import * as path from "path";
 const app = express();
+
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const PORT = 3001;
 app.use(express.json());
@@ -31,6 +33,14 @@ function getSupabaseClient() {
 }
 
 //TODO : singleton pattern for redis connection
+(async () => {
+    try{
+        await redisClient.connect();
+        console.log("successfully connected to the redis server");
+    } catch(err) {
+        console.error("an error occured while connecting to the redis server : " , err);
+    }
+})();
 
 //route to save the recently written code to db so the voice agent can fetch and then verify what the user is writiting 
 app.post("/save-code" , async (req,res) => {
@@ -143,13 +153,15 @@ app.post('/run-code' , async (req ,res) => {
 
         //now push the payload to the redis queue
         const payload = {
-            quetionId : questionId,
+            questionId : questionId,
             question : question,
             interviewId : interviewId,
             code : code,
             language : language,
             status : status
         };
+
+        console.log("the payload to be pushed to the redis queue is : " , payload);
 
         //push the payload to a redis queue>
         await redisClient.lPush("submissions" , JSON.stringify(payload));

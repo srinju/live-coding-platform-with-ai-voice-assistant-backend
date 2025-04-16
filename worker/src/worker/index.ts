@@ -2,8 +2,13 @@ import { createClient as cl } from 'redis';
 import { OpenAI } from 'openai';
 import { createClient } from "@supabase/supabase-js";
 import languageSupport from './languageSupport.json';
+import * as dotenv from "dotenv";
+import * as path from "path";
 
-const  JUDGE0_API_URL = 'https://ce.judge0.com/submissions?base64_encoded=false&wait=true';
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
+const JUDGE0_API_URL = 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true';
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY || '';
 
 function getLanguageId(languageName : string) {
     const match = languageSupport.find(lang => lang.name === languageName);
@@ -79,8 +84,8 @@ class CodeExecutionWorker {
         console.log("the response from the redis queue is : " , response);
 
         if(!response) {
-            console.log("no response from the redis queue");
-            return;
+          console.log("No message in queue, waitingggg...");
+          continue;
         }
 
         this.isProcessing = true;
@@ -139,7 +144,8 @@ class CodeExecutionWorker {
         const result = await fetch(JUDGE0_API_URL , {
             method : 'POST',
             headers : {
-                'content-type' : 'application/json'
+                'content-type' : 'application/json',
+                'X-RapidAPI-Key': JUDGE0_API_KEY
             },
             body : JSON.stringify(judge0RequestBody)
         });
@@ -164,7 +170,7 @@ class CodeExecutionWorker {
             .from('live_coding_questions')
             .update({
                 question_id : submission.questionId,
-                question : submission.question,
+                question : question,
                 language : submission.language,
                 code : submission.code,
                 result : resultStatus,
@@ -184,7 +190,7 @@ class CodeExecutionWorker {
 
         const publishingPayload = {
           questionId : submission.questionId,
-          question : submission.question,
+          question : question,
           language : submission.language,
           code : submission.code,
           result : resultStatus,

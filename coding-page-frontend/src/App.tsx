@@ -89,10 +89,11 @@ function App() {
 
   //TODO : fetch the quesiotn and the interview id and store in the state
   //TODO : customize ui to show the output data in the ui output section
-  //TODO : when the user types the code the code should be to the ws server
+  //TODO : when the user types the code the code should be to the ws server //debound 2 seconds
   //TODO : make a language select thingy 
   //NOTE : status while submitting the code should be unchecked (for sending to ws server whenever the user writes something)
-
+  //status : "unchecked"
+  
   return (
     <div className="app-container">
       <div className="question-section">
