@@ -8,7 +8,7 @@ function App() {
   const WEBSOCKET_SERVER_URL = "ws://localhost:3000";
 
   const [socket , setSocket] = useState<WebSocket | null>(null);
-  const [status , setStatus] = useState('');
+  const [status , setStatus] = useState('unchecked'); //default status set to unchecked will be accepted or rejected based on the result of the executionof the code
   const [result , setResult] = useState('');
   const [output , setOutput] = useState('');
   const [code, setCode] = useState('// Write your code here');
@@ -90,6 +90,8 @@ function App() {
   //TODO : fetch the quesiotn and the interview id and store in the state
   //TODO : customize ui to show the output data in the ui output section
   //TODO : when the user types the code the code should be to the ws server
+  //TODO : make a language select thingy 
+  //NOTE : status while submitting the code should be unchecked (for sending to ws server whenever the user writes something)
 
   return (
     <div className="app-container">

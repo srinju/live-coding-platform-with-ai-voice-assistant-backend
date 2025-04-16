@@ -161,9 +161,9 @@ class CodeExecutionWorker {
         //save to the supabase db the current result of the code execution>
         const supabase = getSupabaseClient();
         const {data , error} = await supabase
-            .from('interview')
+            .from('live_coding_questions')
             .update({
-                questionId : submission.questionId,
+                question_id : submission.questionId,
                 question : submission.question,
                 language : submission.language,
                 code : submission.code,
@@ -173,7 +173,7 @@ class CodeExecutionWorker {
                 memory : resultMemory,
                 status : "checked"
             })
-            .eq('id' , submission.interviewId);
+            .eq('interview_id' , submission.interviewId);
 
         if(error) {
             console.error("error updating the interview table with the resut of the execution of the code : " , error.message);
@@ -181,9 +181,22 @@ class CodeExecutionWorker {
         }
 
         console.log("the result of the code execution is saved to the supabase db " , data);
-            
+
+        const publishingPayload = {
+          questionId : submission.questionId,
+          question : submission.question,
+          language : submission.language,
+          code : submission.code,
+          result : resultStatus,
+          output : resultOutput,
+          time : resultTime,
+          memory : resultMemory,
+          status : "checked"
+        }
+
+        console.log("the publishing payload is : " , publishingPayload);
         //publish to the redis pub sub channel.
-        await this.publishResult(submission.questionId, data);
+        await this.publishResult(submission.questionId, publishingPayload);
 
         console.log("the result of the code execution is published to the redis pub sub channel successfully!!");
 

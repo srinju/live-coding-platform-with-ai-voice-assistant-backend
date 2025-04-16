@@ -91,7 +91,7 @@ wss.on('connection' , async function connection(socket) {
        console.log("the data received from the frontend is  : " , data.toString());
        try {
             //take room name maybe for rpc call to the voice agent 
-            const {questionId , question , interviewId ,  code , language} = JSON.parse(data.toString());
+            const {questionId , question , interviewId , status , code , language} = JSON.parse(data.toString());
             //ask vijay whether we need to create a room for each user or we just handle things from the db
             //hit out backend route to save the code in the db>
             if(!questionId || !interviewId) {
@@ -105,7 +105,7 @@ wss.on('connection' , async function connection(socket) {
                 interviewId : interviewId,
                 code : code,
                 language : language,
-                status : "unchecked"
+                status : status || "unchecked"
             }
 
             const response = await fetch(`${PRIMARY_BACKEND_URL}/save-code` , {

@@ -116,16 +116,18 @@ app.post('/run-code' , async (req ,res) => {
         const {questionId , question , interviewId , code , language , status} = body;
 
         //first push the code to the db before pushing it to the worker for excecution
+        //questions will be created by the role-context supabase edge function while creating the role only in
+        //the live_coding_questions table for that interviewId so we will have the interviewId
         const {data , error} = await supabase
-            .from('interview')
+            .from('live_coding_questions')
             .update({
-                questionId : questionId,
+                question_id : questionId,
                 question : question,
                 code : code,
                 language : language,
                 status : status
             })
-            .eq('id' , interviewId);
+            .eq('interview_id' , interviewId);
 
         if(error) {
             console.error("error updating interview table with the payload from the ws server " , error.message);
