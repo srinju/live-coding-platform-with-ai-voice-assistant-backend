@@ -101,9 +101,7 @@ class CodeExecutionWorker {
         const code = submission.code;
         const question = submission.question;
 
-        //make an openai api call to get the expected output for the particular code the user has written 
-        //or we can get the question also .
-        //TODO : get the question also from the PM via the ws
+        /*
         const prompt = `
             You are code analyser and you analyze the code and the question and then you give the
             expected input and output for the code.
@@ -133,12 +131,11 @@ class CodeExecutionWorker {
 
         //result from the judge0 api
         //send the code and language id , the input and the expected output to the judge0 api and get the result
+        */
 
         const judge0RequestBody = {
             source_code : code,
             language_id : languageId,
-            stdin : expectedInput,
-            expected_output : expectedOutput
         };
 
         const result = await fetch(JUDGE0_API_URL , {
@@ -156,11 +153,11 @@ class CodeExecutionWorker {
         }
         
         const resultData = await result.json();
-        console.log("the result from the judge0 api is : " , resultData);
+        console.log("the result from the judge0 api is -------------------------: " , resultData);
 
         //status of the respons from the api>
         const resultStatus = resultData.status.description;
-        const resultOutput = resultData.stdout;
+        const resultOutput = resultData.compile_output;
         const resultTime = resultData.time;
         const resultMemory = resultData.memory;
 
