@@ -170,7 +170,7 @@ function App() {
       <div className="editor-container">
         <Editor
           height="500px"
-          defaultLanguage="javascript"
+          defaultLanguage="javascript" //dynmically select
           value={code}
           onChange={handleCodeChange}
           theme="vs-dark" // Dark mode theme

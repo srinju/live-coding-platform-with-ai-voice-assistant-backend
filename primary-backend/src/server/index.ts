@@ -19,7 +19,9 @@ app.use(express.json());
 app.use(cors());
 
 //init redis client
-const redisClient = cl();
+const redisClient = cl({
+  url: 'redis://redis:6379'
+});
 
 function getSupabaseClient() {
     const supabaseUrl = process.env.SUPABASE_URL;

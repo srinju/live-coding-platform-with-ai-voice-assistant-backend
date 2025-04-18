@@ -46,13 +46,9 @@ class CodeExecutionWorker {
   private resultChannel: string = 'execution-results';
   
   constructor() {
-    /*
-    this.redisClient = createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379'
+    this.redisClient = cl({
+      url: 'redis://redis:6379'
     });
-    */
-
-    this.redisClient = cl();
     
     this.redisClient.on('error', (err: Error) => {
       console.error('Redis client error:', err);

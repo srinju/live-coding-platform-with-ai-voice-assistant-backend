@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  redis:
+    build: ./redis
+    container_name: live-coding-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  primary-backend:
+    build: ./primary-backend
+    container_name: live-coding-primary-backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  websocket-server:
+    build: ./websocket-server
+    container_name: live-coding-websocket-server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      - primary-backend
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  worker:
+    build: ./worker
+    container_name: live-coding-worker
+    depends_on:
+      - redis
+      - primary-backend
+    env_file:
+      - .env
+    restart: unless-stopped
+
+volumes:
+  redis-data: 

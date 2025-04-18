@@ -26,10 +26,12 @@ interface requestBodType {
     status : string;
 };
 
-const PRIMARY_BACKEND_URL = "http://localhost:3001";
+const PRIMARY_BACKEND_URL = "http://primary-backend:3001";
 
 //redis clent
-const redisClient = createClient();
+const redisClient = createClient({
+  url: 'redis://redis:6379'
+});
 
 //subscribtion with the redis pub sub channel
 (async () => {
