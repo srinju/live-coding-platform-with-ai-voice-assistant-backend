@@ -184,6 +184,57 @@ app.post('/run-code' , async (req ,res) => {
     }
 });
 
+app.post("/get-code-and-question" , async(req , res) => {
+    const supabase = getSupabaseClient();
+
+    try {
+        const body = req.body;
+        const {interviewId } = body;
+        //fetcj the code and the question from the db using the interview id from the live_coding_questions table>
+        const {data , error} = await supabase
+            .from('live_coding_questions')
+            .select('question , code')
+            .eq('interview_id' , interviewId);
+
+        if(error) {
+            console.error("an error occured whihle fetching the code and the question from the supabase db using the query : " , error);
+            res.status(400).json({
+                success : false,
+                message : "an error occured whihle fetching the code and the question from the supabase db using the query : " + error
+            });
+            return;
+        };
+
+        if (!data || data.length === 0) {
+            console.error("No data found for this interview ID");
+            res.status(404).json({
+                success: false,
+                message: "No data found for this interview ID"
+            });
+            return;
+        }
+
+        console.log("the data from the supabase db is : " , data);
+
+        // Take the first row if multiple rows are returned
+        const {question , code} = data[0];
+        //send the question and the code to the frontend>
+        res.status(200).json({
+            success : true,
+            message : "the code and the question fetched successfully!!",
+            question ,
+            code
+        });
+
+    } catch(error) {
+        console.error("an error occured while fetching the code and the questions from the db : " , error);
+        res.status(500).json({
+            success : false,
+            message : "an error occured while fetching the code and the questions from the db"
+        });
+    }
+});
+
 app.listen(PORT , () => {
     console.log(`server Primary Backend is running on port ${PORT}`);
 })

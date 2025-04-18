@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { createClient } from "redis";
 import * as dotenv from "dotenv";
 import * as path from "path";
