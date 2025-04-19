@@ -57,15 +57,16 @@ const redisClient = createClient({
             }
             */
 
-            const {questionId , question , result , output , time , memory} = parsedMessage;
+            const {questionId , question , interviewId , result , output , time , memory} = parsedMessage;
 
             //get the ws client from the submissionsClient map
-            const wsClient = submissionsClient.get(questionId);
+            const wsClient = submissionsClient.get(interviewId);
 
             if(wsClient && wsClient.readyState === WebSocket.OPEN) {
                 wsClient.send(JSON.stringify({
                     questionId,
                     question,
+                    interviewId,
                     result,
                     output,
                     time,
@@ -107,8 +108,8 @@ wss.on('connection' , async function connection(socket) {
                 return;
             }
 
-            if(questionId) {
-                submissionsClient.set(questionId , socket);
+            if(interviewId) {
+                submissionsClient.set(interviewId , socket);
             }
 
             const requestBody : requestBodType = {

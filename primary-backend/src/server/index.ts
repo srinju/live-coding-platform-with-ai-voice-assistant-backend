@@ -195,7 +195,7 @@ app.post("/get-code-and-question" , async(req , res) => {
         //fetcj the code and the question from the db using the interview id from the live_coding_questions table>
         const {data , error} = await supabase
             .from('live_coding_questions')
-            .select('question , code')
+            .select('question , code , question_id , language')
             .eq('interview_id' , interviewId);
 
         if(error) {
@@ -219,13 +219,16 @@ app.post("/get-code-and-question" , async(req , res) => {
         console.log("the data from the supabase db is : " , data);
 
         // Take the first row if multiple rows are returned
-        const {question , code} = data[0];
+        const {question , code , question_id , language} = data[0];
+        console.log("questionId -------------" , question_id);
         //send the question and the code to the frontend>
         res.status(200).json({
             success : true,
             message : "the code and the question fetched successfully!!",
             question ,
-            code
+            questionId : question_id,
+            code ,
+            language : language
         });
 
     } catch(error) {

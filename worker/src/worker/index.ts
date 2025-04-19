@@ -184,6 +184,7 @@ class CodeExecutionWorker {
         const publishingPayload = {
           questionId : submission.questionId,
           question : question,
+          interviewId : submission.interviewId,
           language : submission.language,
           code : submission.code,
           result : resultStatus,
