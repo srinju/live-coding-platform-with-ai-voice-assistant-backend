@@ -20,7 +20,7 @@ function App() {
   const [question , setQuestion] = useState('');
   const [language , setLanguage] = useState('');
 
-  const interviewId = useParams().interviewId || 'cdb368fb-0fcd-4785-91a3-759939c22530'; //get interview id from the url , hardcoded for testing purposes
+  const interviewId = useParams().interviewId || '991cd08a-3e6d-4a64-861b-79e2364764a3'; //get interview id from the url , hardcoded for testing purposes
 
   //TODO : remove the hardcoded interview id from the url and use the interview id from the param
   //TODO : one question is fetched and other code is overwritten with the same first one.
@@ -56,6 +56,13 @@ function App() {
     }
   }
 
+  /* TODO : it will listen for the event from the agent event from the agent backend 
+  and then set the question id in the state>
+  useEffect(() => {
+    setQuestionId(receivedQuestionId);
+  },[eventType])
+  */
+
   // Debounced function to send code to websocket
   const debouncedSendCode = useCallback(
     debounce((codeToSend: string) => {
@@ -68,6 +75,7 @@ function App() {
           language,
           status: 'unchecked'
         };
+        //rpc methoid call tp agent backend
         console.log("Sending code to websocket:", payload);
         socket.send(JSON.stringify(payload));
         console.log("Code sent to websocket server after debounce");

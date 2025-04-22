@@ -172,7 +172,7 @@ class CodeExecutionWorker {
                 memory : resultMemory,
                 status : "checked"
             })
-            .eq('interview_id' , submission.interviewId);
+            .eq('question_id' , submission.questionId);
 
         if(error) {
             console.error("error updating the interview table with the resut of the execution of the code : " , error.message);

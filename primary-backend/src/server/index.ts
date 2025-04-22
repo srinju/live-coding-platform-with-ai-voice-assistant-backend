@@ -84,7 +84,7 @@ app.post("/save-code" , async (req,res) => {
                 language : language,
                 status : status
             })
-            .eq('interview_id' , interviewId);
+            .eq('question_id' , questionId);
 
         if(error) {
             console.error("error updating interview table with the payload from the ws server " , error.message);
@@ -139,7 +139,7 @@ app.post('/run-code' , async (req ,res) => {
                 language : language,
                 status : status
             })
-            .eq('interview_id' , interviewId);
+            .eq('question_id' , questionId);
 
         if(error) {
             console.error("error updating interview table with the payload from the ws server " , error.message);
