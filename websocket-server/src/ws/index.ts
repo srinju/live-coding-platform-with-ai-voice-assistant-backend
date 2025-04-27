@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const app = express();
 app.use(cors());
-const httpServer = app.listen(3000);
+const httpServer = app.listen(3002);
 
 const wss = new WebSocketServer({
     server : httpServer

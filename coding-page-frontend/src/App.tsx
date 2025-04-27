@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 function App() {
 
   const PRIMARY_BACKEND_URL = "http://localhost:3001";
-  const WEBSOCKET_SERVER_URL = "ws://localhost:3000";
+  const WEBSOCKET_SERVER_URL = "ws://localhost:3002";
 
   const [socket , setSocket] = useState<WebSocket | null>(null);
   const [status , setStatus] = useState('unchecked'); //default status set to unchecked will be accepted or rejected based on the result of the executionof the code
@@ -34,7 +34,10 @@ function App() {
         headers : {
           'content-type' : 'application/json'
         },
-        body : JSON.stringify({interviewId : interviewId})
+        body : JSON.stringify({
+          //interviewId : interviewId,
+          questionId : questionId
+        })
       });
 
       if(!questionAndCodeResponse.ok) {
@@ -45,10 +48,9 @@ function App() {
       const questionAndCodeData = await questionAndCodeResponse.json();
       console.log("the question and the code from the request is  : " , questionAndCodeData);
 
-      //set the question and the code in the state>
+      //set the question and the code and the language in the state>
       setQuestion(questionAndCodeData.question);
       setCode(questionAndCodeData.code);
-      setQuestionId(questionAndCodeData.questionId);
       setLanguage(questionAndCodeData.language);
 
     } catch(err) {

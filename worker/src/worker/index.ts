@@ -153,7 +153,7 @@ class CodeExecutionWorker {
 
         //status of the respons from the api>
         const resultStatus = resultData.status.description;
-        const resultOutput = resultData.compile_output;
+        const resultOutput = resultData.compile_output; //for exact output of the code do stdout
         const resultTime = resultData.time;
         const resultMemory = resultData.memory;
 

@@ -218,17 +218,10 @@ app.post("/get-code-and-question" , async(req , res) => {
 
         console.log("the data from the supabase db is : " , data);
 
-        // Take the first row if multiple rows are returned
-        const {question , code , question_id , language} = data[0];
-        console.log("questionId -------------" , question_id);
-        //send the question and the code to the frontend>
         res.status(200).json({
             success : true,
             message : "the code and the question fetched successfully!!",
-            question ,
-            questionId : question_id,
-            code ,
-            language : language
+            data //return both of the uqestions , codes and languages to the frontend.
         });
 
     } catch(error) {
