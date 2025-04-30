@@ -88,3 +88,31 @@ button:hover {
   color: #f0f0f0;
 }
 
+.code-output {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.result-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.result-details p {
+  margin: 5px 0;
+}
+
+.result-details strong {
+  color: #007acc;
+}
+

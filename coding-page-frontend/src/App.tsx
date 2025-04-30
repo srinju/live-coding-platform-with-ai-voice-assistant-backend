@@ -16,11 +16,11 @@ function App() {
   const [code, setCode] = useState('');
   const [time , setTime] = useState(0);
   const [memory , setMemory] = useState(0);
-  const [questionId , setQuestionId] = useState('');
+  const [questionId , setQuestionId] = useState('34b3055b-38ed-4e4b-919b-65236e2eb1cb');
   const [question , setQuestion] = useState('');
   const [language , setLanguage] = useState('');
 
-  const interviewId = useParams().interviewId || '991cd08a-3e6d-4a64-861b-79e2364764a3'; //get interview id from the url , hardcoded for testing purposes
+  const interviewId = useParams().interviewId || '4c83ccef-1f57-499b-8674-a61e5f4a0066'; //get interview id from the url , hardcoded for testing purposes
 
   //TODO : remove the hardcoded interview id from the url and use the interview id from the param
   //TODO : one question is fetched and other code is overwritten with the same first one.
@@ -36,7 +36,7 @@ function App() {
         },
         body : JSON.stringify({
           //interviewId : interviewId,
-          questionId : questionId
+          interviewId : interviewId
         })
       });
 
@@ -49,9 +49,9 @@ function App() {
       console.log("the question and the code from the request is  : " , questionAndCodeData);
 
       //set the question and the code and the language in the state>
-      setQuestion(questionAndCodeData.question);
-      setCode(questionAndCodeData.code);
-      setLanguage(questionAndCodeData.language);
+      setQuestion(questionAndCodeData.data[0].question);
+      setCode(questionAndCodeData.data[0].code);
+      setLanguage(questionAndCodeData.data[0].language);
 
     } catch(err) {
       console.error("an error occured while fetching the question from the db : " , err);
@@ -195,12 +195,13 @@ function App() {
       </div>
       <div className="output-container">
         <h3>Output:</h3>
-        <pre>{output}</pre>
-        <p>result : {result}</p>
-        <p>status : {status}</p>
-        <p>Time: {time} ms</p>
-        <p>Memory: {memory} MB</p>
-        <p>language : {language}</p>
+        <pre className="code-output">{output}</pre>
+        <div className="result-details">
+          <p><strong>Status:</strong> {status}</p>
+          <p><strong>Time:</strong> {time} ms</p>
+          <p><strong>Memory:</strong> {memory} KB</p>
+          <p><strong>Language:</strong> {language}</p>
+        </div>
       </div>
     </div>
   );

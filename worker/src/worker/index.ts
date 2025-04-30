@@ -153,9 +153,14 @@ class CodeExecutionWorker {
 
         //status of the respons from the api>
         const resultStatus = resultData.status.description;
-        const resultOutput = resultData.compile_output; //for exact output of the code do stdout
+        const resultOutput = resultData.stdout; //for exact output of the code do stdout
+        //Remove the incorrect JSON parsing
+        //const resultOutputParsed = JSON.parse(resultOutput);
         const resultTime = resultData.time;
         const resultMemory = resultData.memory;
+
+        console.log("result output : ----------------------------------" , resultOutput);
+        //console.log("result output parsed : ----------------------------------" , resultOutputParsed);
 
         //save to the supabase db the current result of the code execution>
         const supabase = getSupabaseClient();
